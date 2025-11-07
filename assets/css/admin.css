@@ -1,119 +1,119 @@
 /* table */
 
 .widefat td {
-    font-size: 12px;
+	font-size: 12px;
 }
 
 .lhr-listing tbody tr:nth-child(even) td {
-    background-color: #f8f8f8;
+	background-color: #f8f8f8;
 }
 
 .widefat .field-status-code,
 .widefat .field-runtime,
 .widefat .field-date {
-    width: 100px;
+	width: 100px;
 }
 
 .widefat .field-args,
 .widefat .field-response {
-    display: none;
+	display: none;
 }
 
 .widefat .field-url {
-    word-break: break-word;
+	word-break: break-word;
 }
 
 .widefat .field-runtime.warn {
-    background-color: rgba(255, 235, 59, 0.2);
+	background-color: rgba(255, 235, 59, 0.2);
 }
 
 .widefat .field-runtime.error {
-    background-color: rgba(244, 67, 54, 0.2);
+	background-color: rgba(244, 67, 54, 0.2);
 }
 
 .http-request-args,
 .http-response {
-    max-height: 300px;
-    font-family: monospace;
-    white-space: pre;
-    overflow: auto;
+	max-height: 300px;
+	font-family: monospace;
+	white-space: pre;
+	overflow: auto;
 }
 
 /* pager */
 
 .lhr-pager {
-    padding: 10px 0;
-    text-align: right;
+	padding: 10px 0;
+	text-align: right;
 }
 
 .lhr-page {
-    display: inline-block;
-    padding: 0px 4px;
-    margin-right: 6px;
-    cursor: pointer;
+	display: inline-block;
+	padding: 0px 4px;
+	margin-right: 6px;
+	cursor: pointer;
 }
 
 .lhr-page.active {
-    font-weight: bold;
-    cursor: default;
+	font-weight: bold;
+	cursor: default;
 }
 
 /* grid */
 
 .wrapper {
-  display: grid;
-  grid-template-columns: 50% 50%;
-  grid-gap: 10px;
+	display: grid;
+	grid-template-columns: 50% 50%;
+	grid-gap: 10px;
 }
 
 /* modal */
 
 .media-modal,
 .media-modal-backdrop {
-    display: none;
+	display: none;
 }
 
 .media-modal.open,
 .media-modal-backdrop.open {
-    display: block;
+	display: block;
 }
 
 .media-frame-title,
 .media-frame-content {
-    left: 0;
+	left: 0;
 }
 
 .media-frame-router {
-    left: 10px;
+	left: 10px;
 }
 
 .media-frame-content {
-    top: 48px;
-    bottom: 0;
-    overflow: auto;
+	top: 48px;
+	bottom: 0;
+	overflow: auto;
 }
 
 .button-link.media-modal-close {
-    cursor: pointer;
-    text-decoration: none;
+	cursor: pointer;
+	text-decoration: none;
 }
 
 .button-link.media-modal-close.prev {
-    margin-right: 60px;
+	margin-right: 60px;
 }
 
 .button-link.media-modal-close.next {
-    margin-right: 30px;
+	margin-right: 30px;
 }
 
 .media-modal-close.prev .media-modal-icon::before {
-    content: "\f342";
+	content: "\f342";
 }
 
 .media-modal-close.next .media-modal-icon::before {
-    content: "\f346";
+	content: "\f346";
 }
 
 .modal-content-wrap {
-    padding: 16px;
+	padding: 16px;
 }
