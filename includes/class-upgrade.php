@@ -69,6 +69,7 @@ class LHR_Upgrade {
             url TEXT,
             request_args MEDIUMTEXT,
             response MEDIUMTEXT,
+            backtrace MEDIUMTEXT,
             runtime VARCHAR(64),
             date_added DATETIME,
             PRIMARY KEY (id)
@@ -87,5 +88,25 @@ class LHR_Upgrade {
 	 */
 	private function run_upgrade() {
 		global $wpdb;
+
+		// Add backtrace column if it doesn't exist (for upgrades from pre-1.5.0).
+		if ( version_compare( $this->last_version, '1.5.0', '<' ) ) {
+			$table_name  = $wpdb->prefix . 'lhr_log';
+			$column_name = 'backtrace';
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$column_exists = $wpdb->get_results(
+				$wpdb->prepare(
+					'SHOW COLUMNS FROM %i LIKE %s',
+					$table_name,
+					$column_name
+				)
+			);
+
+			if ( empty( $column_exists ) ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$wpdb->query( "ALTER TABLE {$table_name} ADD COLUMN backtrace MEDIUMTEXT AFTER response" );
+			}
+		}
 	}
 }

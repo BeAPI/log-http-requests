@@ -48,7 +48,21 @@ In the above example, the `$data` array keys correspond to columns within the `l
 
 == Changelog ==
 
-= 1.4.1
+= 1.5.0 =
+* Added: Search functionality to filter HTTP requests by URL
+* Added: Backtrace information for each HTTP request to track request origins
+* Refactored: Moved main plugin class to separate file for better organization
+* Improved: Added comprehensive PHPDoc documentation throughout the codebase
+* Enhanced: Full compliance with WordPress Coding Standards (WPCS)
+* Added: PHP CodeSniffer (PHPCS) configuration and Composer support
+* Improved: Better code structure and maintainability
+* Enhanced: Security improvements with proper nonce verification and data sanitization
+* Added: Developer documentation (CONTRIBUTING.md)
+* Updated: Asset versioning for better cache management
+* Fixed: Database upgrade mechanism for seamless updates
+* Fixed: HTML rendering in admin interface
+
+= 1.4.1 =
 * Fixed PHP8 deprecation notices
 
 = 1.4 =

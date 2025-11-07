@@ -20,31 +20,34 @@
 						'data': LHR.query_args
 					},
 					function (data) {
-						LHR.response        = data;
-						LHR.query_args.page = 1;
+						LHR.response = data;
 
 						var html = '';
 						$.each(
 							data.rows,
 							function (idx, row) {
-								var runtime          = parseFloat( row.runtime );
-								var css_class        = (runtime > 1) ? ' warn' : '';
-								css_class            = (runtime > 2) ? ' error' : css_class;
-								html                += `
-								< tr >
-								< td class           = "field-url" >
-									< div > < a href = "javascript:;" data - id = "` + idx + `" > ` + row.url + ` < / a > < / div >
-								< / td >
-								< td class           = "field-status-code" > ` + row.status_code + ` < / td >
-								< td class           = "field-runtime` + css_class + `" > ` + row.runtime + ` < / td >
-								< td class           = "field-date" title = "` + row.date_raw + `" > ` + row.date_added + ` < / td >
-								< / tr >
-								`;
+								var runtime   = parseFloat( row.runtime );
+								var css_class = (runtime > 1) ? ' warn' : '';
+								css_class     = (runtime > 2) ? ' error' : css_class;
+								html         += '<tr>';
+								html         += '<td class="field-url"><div><a href="javascript:;" data-id="' + idx + '">' + row.url + '</a></div></td>';
+								html         += '<td class="field-status-code">' + row.status_code + '</td>';
+								html         += '<td class="field-runtime' + css_class + '">' + row.runtime + '</td>';
+								html         += '<td class="field-date" title="' + row.date_raw + '">' + row.date_added + '</td>';
+								html         += '</tr>';
 							}
 						);
 						$( '.lhr-listing tbody' ).html( html );
 						$( '.lhr-pager' ).html( data.pager );
 						$( '.lhr-refresh' ).text( 'Refresh' ).removeAttr( 'disabled' );
+
+						// Update search input with current search term.
+						if (LHR.query_args.search) {
+							$( '.lhr-search-input' ).val( LHR.query_args.search );
+							$( '.lhr-clear-search' ).show();
+						} else {
+							$( '.lhr-clear-search' ).hide();
+						}
 					},
 					'json'
 				);
@@ -84,6 +87,7 @@
 				$( '.http-request-id' ).text( id );
 				$( '.http-request-args' ).text( JSON.stringify( JSON.parse( data.request_args ), null, 2 ) );
 				$( '.http-response' ).text( JSON.stringify( JSON.parse( data.response ), null, 2 ) );
+				$( '.http-backtrace' ).text( data.backtrace || 'No backtrace available' );
 				$( '.media-modal' ).addClass( 'open' );
 				$( '.media-modal-backdrop' ).addClass( 'open' );
 			}
@@ -95,6 +99,49 @@
 				function () {
 					LHR.query_args.page = parseInt( $( this ).attr( 'data-page' ) );
 					LHR.refresh();
+				}
+			);
+
+			// Search functionality.
+			$( document ).on(
+				'click',
+				'.lhr-search-button',
+				function () {
+					var search_term       = $( '.lhr-search-input' ).val().trim();
+					LHR.query_args.search = search_term;
+					LHR.query_args.page   = 1;
+					LHR.refresh();
+
+					if (search_term) {
+						$( '.lhr-clear-search' ).show();
+					} else {
+						$( '.lhr-clear-search' ).hide();
+					}
+				}
+			);
+
+			// Clear search.
+			$( document ).on(
+				'click',
+				'.lhr-clear-search',
+				function () {
+					$( '.lhr-search-input' ).val( '' );
+					LHR.query_args.search = '';
+					LHR.query_args.page   = 1;
+					LHR.refresh();
+					$( this ).hide();
+				}
+			);
+
+			// Search on Enter key.
+			$( document ).on(
+				'keypress',
+				'.lhr-search-input',
+				function (e) {
+					if (13 == e.keyCode) {
+						e.preventDefault();
+						$( '.lhr-search-button' ).click();
+					}
 				}
 			);
 

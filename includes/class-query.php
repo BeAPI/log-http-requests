@@ -75,16 +75,25 @@ class LHR_Query {
 		$page     = (int) $args['page'];
 		$per_page = (int) $args['per_page'];
 		$limit    = ( ( $page - 1 ) * $per_page ) . ',' . $per_page;
+		$search   = ! empty( $args['search'] ) ? sanitize_text_field( $args['search'] ) : '';
+
+		// Build WHERE clause for search.
+		$where = '';
+		if ( ! empty( $search ) ) {
+			$search_like = '%' . $this->wpdb->esc_like( $search ) . '%';
+			$where       = $this->wpdb->prepare( ' WHERE url LIKE %s', $search_like );
+		}
 
 		$this->sql = "
             SELECT
                 SQL_CALC_FOUND_ROWS
-                id, url, request_args, response, runtime, date_added
+                id, url, request_args, response, backtrace, runtime, date_added
             FROM {$this->wpdb->prefix}lhr_log
+            {$where}
             ORDER BY $orderby $order, id DESC
             LIMIT $limit
         ";
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Dynamic ORDER BY and LIMIT, validated inputs.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Dynamic ORDER BY and LIMIT, validated inputs. WHERE is prepared above.
 		$results = $this->wpdb->get_results( $this->sql, ARRAY_A );
 
 		$total_rows  = (int) $this->wpdb->get_var( 'SELECT FOUND_ROWS()' );

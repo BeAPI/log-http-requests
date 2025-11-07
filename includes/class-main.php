@@ -47,7 +47,7 @@ class Log_HTTP_Requests {
 	public function __construct() {
 
 		// Setup variables.
-		define( 'LHR_VERSION', '1.4.1' );
+		define( 'LHR_VERSION', '1.5.0' );
 		define( 'LHR_DIR', dirname( __DIR__ ) );
 		define( 'LHR_URL', plugins_url( '', __DIR__ ) );
 		define( 'LHR_BASENAME', plugin_basename( __DIR__ . '/log-http-requests.php' ) );
@@ -241,6 +241,11 @@ class Log_HTTP_Requests {
 			return;
 		}
 
+		// Capture backtrace to identify the source of the request.
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_wp_debug_backtrace_summary -- Used for logging purposes, not debugging.
+		$backtrace_array = wp_debug_backtrace_summary( null, 0, false );
+		$backtrace       = is_array( $backtrace_array ) ? implode( "\n", $backtrace_array ) : $backtrace_array;
+
 		// False to ignore current row.
 		$log_data = apply_filters(
 			'lhr_log_data',
@@ -248,6 +253,7 @@ class Log_HTTP_Requests {
 				'url'          => $url,
 				'request_args' => wp_json_encode( $args ),
 				'response'     => wp_json_encode( $response ),
+				'backtrace'    => $backtrace,
 				'runtime'      => ( microtime( true ) - $this->start_time ),
 				'date_added'   => current_time( 'mysql' ),
 			)

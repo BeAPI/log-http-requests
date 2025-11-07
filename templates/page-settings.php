@@ -15,7 +15,8 @@ var LHR = {
 	query_args: {
 		'orderby': 'id',
 		'order': 'DESC',
-		'page': 1
+		'page': 1,
+		'search': ''
 	},
 	nonce: '<?php echo esc_js( wp_create_nonce( 'lhr_nonce' ) ); ?>'
 };
@@ -24,8 +25,18 @@ var LHR = {
 <div class="wrap">
 	<h3>Log HTTP Requests</h3>
 
-	<button class="button lhr-clear" onclick="LHR.clear()">Clear log</button>
-	<button class="button lhr-refresh" onclick="LHR.refresh()">Refresh</button>
+	<div class="lhr-toolbar">
+		<div class="lhr-search-box">
+			<input type="text" class="lhr-search-input" placeholder="Search URLs..." value="">
+			<button class="button lhr-search-button">Search</button>
+			<button class="button lhr-clear-search" style="display:none;">Clear</button>
+		</div>
+		<div class="lhr-actions">
+			<button class="button lhr-clear" onclick="LHR.clear()">Clear log</button>
+			<button class="button lhr-refresh" onclick="LHR.refresh()">Refresh</button>
+		</div>
+	</div>
+
 	<div class="lhr-pager"></div>
 	<table class="widefat lhr-listing">
 		<thead>
@@ -68,6 +79,10 @@ var LHR = {
 							<h3>Response</h3>
 							<div class="http-response"></div>
 						</div>
+					</div>
+					<div class="backtrace-section">
+						<h3>Backtrace</h3>
+						<div class="http-backtrace"></div>
 					</div>
 				</div>
 			</div>
