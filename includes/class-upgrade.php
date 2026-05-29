@@ -42,7 +42,6 @@ class LHR_Upgrade {
 
 		if ( version_compare( $this->last_version, $this->version, '<' ) ) {
 			if ( version_compare( $this->last_version, '0.1.0', '<' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 				$this->clean_install();
 			} else {
 				$this->run_upgrade();
@@ -63,19 +62,21 @@ class LHR_Upgrade {
 	private function clean_install() {
 		global $wpdb;
 
-		$sql = "
-        CREATE TABLE IF NOT EXISTS {$wpdb->prefix}lhr_log (
-            id BIGINT unsigned not null auto_increment,
-            url TEXT,
-            request_args MEDIUMTEXT,
-            response MEDIUMTEXT,
-            backtrace MEDIUMTEXT,
-            runtime VARCHAR(64),
-            date_added DATETIME,
-            PRIMARY KEY (id)
-        ) DEFAULT CHARSET=utf8mb4";
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Creating table, not dynamic query.
-		$wpdb->query( $sql );
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$sql = "CREATE TABLE {$wpdb->prefix}lhr_log (
+			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+			url TEXT,
+			request_args MEDIUMTEXT,
+			response MEDIUMTEXT,
+			backtrace MEDIUMTEXT,
+			runtime VARCHAR(64),
+			date_added DATETIME,
+			PRIMARY KEY  (id)
+		) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
 	}
 
 

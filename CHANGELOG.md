@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2026-05-29
+
+### Security
+- Hardened SQL queries with prepared statements and strict numeric validation
+- Improved request logging sanitization and explicit insert format handling
+- Removed a potential XSS vector in admin table rendering by switching to safe DOM APIs
+
+### Changed
+- Improved date rendering with client-side local timezone formatting
+- Added plugin text domain metadata and standardized admin template i18n strings
+- Refined URL column rendering with ellipsis for better readability
+- Updated table creation to use `dbDelta()` with charset/collation support
+
 ## [1.5.0] - 2025-11-07
 
 ### Added

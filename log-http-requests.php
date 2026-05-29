@@ -2,9 +2,11 @@
 /**
  * Plugin Name: Log HTTP Requests
  * Description: Log all those pesky WP HTTP requests
- * Version: 1.5.0
+ * Version: 1.5.1
  * Author: FacetWP, LLC
  * Author URI: https://facetwp.com/
+ * Text Domain: log-http-requests
+ * Domain Path: /languages
  *
  * Copyright 2023 FacetWP, LLC
  *

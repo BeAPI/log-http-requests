@@ -47,7 +47,7 @@ class Log_HTTP_Requests {
 	public function __construct() {
 
 		// Setup variables.
-		define( 'LHR_VERSION', '1.5.0' );
+		define( 'LHR_VERSION', '1.5.1' );
 		define( 'LHR_DIR', dirname( __DIR__ ) );
 		define( 'LHR_URL', plugins_url( '', __DIR__ ) );
 		define( 'LHR_BASENAME', plugin_basename( __DIR__ . '/log-http-requests.php' ) );
@@ -108,11 +108,10 @@ class Log_HTTP_Requests {
 	public function cleanup() {
 		global $wpdb;
 
-		$now     = current_time( 'timestamp' );
-		$expires = apply_filters( 'lhr_expiration_days', 1 );
-		$expires = gmdate( 'Y-m-d H:i:s', strtotime( '-' . $expires . ' days', $now ) );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}lhr_log WHERE date_added < '$expires'" );
+		$expires      = apply_filters( 'lhr_expiration_days', 1 );
+		$expires_date = gmdate( 'Y-m-d H:i:s', strtotime( '-' . absint( $expires ) . ' days' ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}lhr_log WHERE date_added < %s", $expires_date ) );
 	}
 
 
@@ -136,6 +135,10 @@ class Log_HTTP_Requests {
 	 * @return void
 	 */
 	public function settings_page() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'log-http-requests' ) );
+		}
+
 		include LHR_DIR . '/templates/page-settings.php';
 	}
 
@@ -183,7 +186,7 @@ class Log_HTTP_Requests {
 	public function lhr_query() {
 		$this->validate();
 
-		$data = isset( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verified in validate(). Data sanitized by get_results().
+		$data = ( isset( $_POST['data'] ) && is_array( $_POST['data'] ) ) ? wp_unslash( $_POST['data'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verified in validate(). Data sanitized by get_results().
 
 		$output = array(
 			'rows'  => LHR()->query->get_results( $data ),
@@ -250,49 +253,22 @@ class Log_HTTP_Requests {
 		$log_data = apply_filters(
 			'lhr_log_data',
 			array(
-				'url'          => $url,
+				'url'          => esc_url_raw( $url ),
 				'request_args' => wp_json_encode( $args ),
 				'response'     => wp_json_encode( $response ),
 				'backtrace'    => $backtrace,
-				'runtime'      => ( microtime( true ) - $this->start_time ),
-				'date_added'   => current_time( 'mysql' ),
+				'runtime'      => floatval( microtime( true ) - $this->start_time ),
+				'date_added'   => gmdate( 'Y-m-d H:i:s' ),
 			)
 		);
 
 		if ( false !== $log_data ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-			$wpdb->insert( $wpdb->prefix . 'lhr_log', $log_data );
-		}
-	}
-
-
-	/**
-	 * Get human-readable time since a given time.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $time The time to calculate from.
-	 * @return string Human-readable time difference.
-	 */
-	public function time_since( $time ) {
-		$time   = current_time( 'timestamp' ) - strtotime( $time );
-		$time   = ( $time < 1 ) ? 1 : $time;
-		$tokens = array(
-			31536000 => 'year',
-			2592000  => 'month',
-			604800   => 'week',
-			86400    => 'day',
-			3600     => 'hour',
-			60       => 'minute',
-			1        => 'second',
-		);
-
-		foreach ( $tokens as $unit => $text ) {
-			if ( $time < $unit ) {
-				continue;
-			}
-			$number_of_units = floor( $time / $unit );
-			return $number_of_units . ' ' . $text . ( ( $number_of_units > 1 ) ? 's' : '' );
+			$wpdb->insert(
+				$wpdb->prefix . 'lhr_log',
+				$log_data,
+				array( '%s', '%s', '%s', '%s', '%f', '%s' )
+			);
 		}
 	}
 }

@@ -2,7 +2,7 @@
 Contributors: mgibbs189
 Tags: log, wp_http, requests, update checks, api
 Requires at least: 5.0
-Tested up to: 6.2.2
+Tested up to: 6.8
 Stable tag: trunk
 License: GPLv2
 
@@ -47,6 +47,15 @@ In the above example, the `$data` array keys correspond to columns within the `l
 2. Browse to `Tools > Log HTTP Requests` to view log entries.
 
 == Changelog ==
+
+= 1.5.1 =
+* Security: Hardened SQL queries with prepared statements and strict numeric validation
+* Security: Improved request logging sanitization and insert format handling
+* Security: Removed potential XSS vector in admin table rendering by using safe DOM APIs
+* Improvement: Improved date display using local timezone formatting in the admin UI
+* Improvement: Added i18n text domain metadata and standardized admin template strings
+* Improvement: Refined URL column rendering with ellipsis for better table readability
+* Improvement: Modernized table creation to use dbDelta() and charset/collation handling
 
 = 1.5.0 =
 * Added: Search functionality to filter HTTP requests by URL
