@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.1] - 2026-05-29
 
+This release backports and adapts upstream improvements from the FacetWP `master` branch into this fork.
+
 ### Security
 - Hardened SQL queries with prepared statements and strict numeric validation
 - Improved request logging sanitization and explicit insert format handling
@@ -17,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added plugin text domain metadata and standardized admin template i18n strings
 - Refined URL column rendering with ellipsis for better readability
 - Updated table creation to use `dbDelta()` with charset/collation support
+
+### Credits
+- Thanks to the upstream Log HTTP Requests project maintainers and contributors for the original hardening and compatibility work.
+- Special thanks to contributors involved in the upstream updates (including `@mgibbs189` and `@szepeviktor`).
 
 ## [1.5.0] - 2025-11-07
 
